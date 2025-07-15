@@ -10,4 +10,8 @@
       <ProjectReference Include="..\HeartBeat.Shared\HeartBeat.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="User\" />
+    </ItemGroup>
+
 </Project>
