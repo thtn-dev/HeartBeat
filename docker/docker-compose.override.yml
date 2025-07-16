@@ -1,0 +1,30 @@
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_LOG_STATEMENT=all
+      - POSTGRES_LOG_MIN_DURATION_STATEMENT=0
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+          cpus: "0.5"
+        reservations:
+          memory: 512MB
+          cpus: "0.25"
+
+  redis:
+    environment:
+      - REDIS_DEBUG=1
+    command: >
+      redis-server /usr/local/etc/redis/redis.conf
+      --loglevel verbose
+      --latency-monitor-threshold 50
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 128M
+          cpus: '0.5'

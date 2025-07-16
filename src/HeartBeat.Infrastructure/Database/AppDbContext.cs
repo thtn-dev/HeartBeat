@@ -5,8 +5,14 @@ using System.Reflection;
 
 namespace HeartBeat.Infrastructure.Database;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -39,15 +45,15 @@ public class AppDbContext : DbContext
         // Configure sequences for sequential IDs
         // These sequences will be used for user IDs, post IDs, etc.
         modelBuilder.HasSequence<long>("user_id_seq")
-            .StartsAt(1000000) // Start from 1 million to have consistent length
+            .StartsAt(1_000_000) // Start from 1 million to have consistent length
             .IncrementsBy(1)
-            .HasMin(1000000)
+            .HasMin(1_000_000)
             .HasMax(long.MaxValue);
 
         modelBuilder.HasSequence<long>("post_id_seq")
-            .StartsAt(1000000)
+            .StartsAt(1_000_000)
             .IncrementsBy(1)
-            .HasMin(1000000)
+            .HasMin(1_000_000)
             .HasMax(long.MaxValue);
 
         // Enable full-text search configurations

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HeartBeat.Infrastructure.Database;
+﻿namespace HeartBeat.Infrastructure.Database;
 
 /// <summary>
 /// Configuration options for database connection and behavior

@@ -8,11 +8,13 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.7" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\HeartBeat.Application\HeartBeat.Application.csproj" />
+      <ProjectReference Include="..\HeartBeat.Infrastructure.Cache\HeartBeat.Infrastructure.Caching.csproj" />
     </ItemGroup>
 
 </Project>

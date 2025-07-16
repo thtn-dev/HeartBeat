@@ -1,42 +1,27 @@
-# Docker Compose for PostgreSQL Infrastructure
-# This setup provides production-ready PostgreSQL with optimized configuration
-version: "3.8"
-
+name: socialx-docker-compose
 services:
-  # PostgreSQL Database Service
-  # Configured with performance optimizations for social network workload
-
   postgres:
     image: postgres:16
     container_name: socialx-postgres
     restart: unless-stopped
 
-    # Environment configuration
     environment:
       POSTGRES_DB: socialx_db
       POSTGRES_USER: socialx_user
       POSTGRES_PASSWORD: admin_password
       POSTGRES_INITDB_ARGS: "--data-checksums"
 
-    # Port mapping
     ports:
       - "5433:5432"
 
-    # Volume mounting
     volumes:
-      # Persistent data storage
       - postgres_data:/var/lib/postgresql/data
-      # FIXED: Correct path for PostgreSQL config file
-      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-      # Initialization scripts
-      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
-      # Backup directory
-      - ./backups:/backups
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./postgres/scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./postgres/backups:/backups
 
-    # FIXED: Uncommented and corrected command
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
 
-    # Health check
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U socialx_user -d socialx_db"]
       interval: 30s
@@ -44,63 +29,29 @@ services:
       retries: 5
       start_period: 30s
 
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          memory: 1GB
-          cpus: "0.5"
-        reservations:
-          memory: 512MB
-          cpus: "0.25"
-
-  # Redis for caching and session management (will be used in later phases)
   redis:
-    image: redis:7-alpine
+    image: redis:8-alpine
     container_name: socialx-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./redis/scripts:/scripts:ro
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
       retries: 5
-
-  # pgAdmin for database management (development only)
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: socialx-pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@socialx.local
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin_password}
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    ports:
-      - "8080:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      postgres:
-        condition: service_healthy
-    profiles:
-      # Only start pgAdmin in development profile
-      - development
-
-# Named volumes for data persistence
+    
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
-  pgadmin_data:
-    driver: local
 
-# Network configuration for service communication
 networks:
   default:
     name: socialx-network

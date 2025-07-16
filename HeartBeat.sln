@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{403EEED4-491B-4226-9318-3EA015DCA00A}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{F7130DAC-1799-4E61-B513-67C7841B0ACB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeartBeat.Infrastructure.Caching", "src\HeartBeat.Infrastructure.Cache\HeartBeat.Infrastructure.Caching.csproj", "{E24B8876-6035-4E32-B5E0-1B6086783673}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{527F4A1E-A60B-4DC3-A68D-AE51A0B8BAF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{527F4A1E-A60B-4DC3-A68D-AE51A0B8BAF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{527F4A1E-A60B-4DC3-A68D-AE51A0B8BAF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E24B8876-6035-4E32-B5E0-1B6086783673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E24B8876-6035-4E32-B5E0-1B6086783673}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E24B8876-6035-4E32-B5E0-1B6086783673}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E24B8876-6035-4E32-B5E0-1B6086783673}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 		{B329E8F3-8A1D-4132-B6D2-D0B772BE1F83} = {403EEED4-491B-4226-9318-3EA015DCA00A}
 		{3001FE82-93CF-4971-8FE1-C33081702B52} = {66D71005-4F9E-46C8-9DC6-17D0640C3B7D}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {F7130DAC-1799-4E61-B513-67C7841B0ACB}
+		{E24B8876-6035-4E32-B5E0-1B6086783673} = {66D71005-4F9E-46C8-9DC6-17D0640C3B7D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1339F505-71B7-482C-8415-0F2AC909F431}
