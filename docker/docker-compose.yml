@@ -1,13 +1,31 @@
-name: socialx-docker-compose
+name: zcm-docker-compose
 services:
+  zcm-api:
+    build:
+      context: ..
+      dockerfile: .\src\ZSocialMedia.WebApi\Dockerfile
+      target: final
+    container_name: zcm-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health", "||", "exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+      
   postgres:
-    image: postgres:16
-    container_name: socialx-postgres
+    image: postgres:16-alpine
+    container_name: zcm-postgres
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: socialx_db
-      POSTGRES_USER: socialx_user
+      POSTGRES_DB: zcm_db
+      POSTGRES_USER: zcm_user
       POSTGRES_PASSWORD: admin_password
       POSTGRES_INITDB_ARGS: "--data-checksums"
 
@@ -23,15 +41,15 @@ services:
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U socialx_user -d socialx_db"]
+      test: ["CMD-SHELL", "pg_isready -U zcm_user -d zcm_db"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 15s
 
   redis:
     image: redis:8-alpine
-    container_name: socialx-redis
+    container_name: zcm-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -54,5 +72,5 @@ volumes:
 
 networks:
   default:
-    name: socialx-network
+    name: zcm-network
     driver: bridge
