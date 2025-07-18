@@ -7,11 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ZSocialMedia.Shared\ZSocialMedia.Shared.csproj" />
+      <Compile Remove="User\**" />
+      <EmbeddedResource Remove="User\**" />
+      <None Remove="User\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="User\" />
+      <ProjectReference Include="..\ZSocialMedia.Shared\ZSocialMedia.Shared.csproj" />
     </ItemGroup>
 
 </Project>
