@@ -16,4 +16,8 @@
       <ProjectReference Include="..\ZSocialMedia.Shared\ZSocialMedia.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\Utils\" />
+    </ItemGroup>
+
 </Project>
