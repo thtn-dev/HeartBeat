@@ -1,12 +1,38 @@
 ﻿using ZSocialMedia.Infrastructure.Database.Functions;
+using ZSocialMedia.Infrastructure.Database.Extensions;
 using ZSocialMedia.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using ZSocialMedia.Domain.UserModule.Entities;
+using ZSocialMedia.Domain.PostModule.Entities;
 
 namespace ZSocialMedia.Infrastructure.Database;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
+    // User Module
+    public DbSet<User> Users { get; set; }
+    public DbSet<UserCredential> UserCredentials { get; set; }
+    public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<UserSettings> UserSettings { get; set; }
+    public DbSet<UserFollower> UserFollowers { get; set; }
+    public DbSet<UserBlock> UserBlocks { get; set; }
+    public DbSet<UserSession> UserSessions { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<EmailVerification> EmailVerifications { get; set; }
+    public DbSet<Role> Roles { get; set; }
+
+    // Post Module
+    // public DbSet<Post> Posts { get; set; }
+    // public DbSet<Comment> Comments { get; set; }
+    // public DbSet<PostLike> PostLikes { get; set; }
+    // public DbSet<PostBookmark> PostBookmarks { get; set; }
+    // public DbSet<PostRepost> PostReposts { get; set; }
+    // public DbSet<PostView> PostViews { get; set; }
+    // public DbSet<PostMedia> PostMedia { get; set; }
+    // public DbSet<PostHashtag> PostHashtags { get; set; }
+    // public DbSet<PostMention> PostMentions { get; set; }
+    // public DbSet<Hashtag> Hashtags { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -15,23 +41,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         // Set default schema
         modelBuilder.HasDefaultSchema("public");
 
         // Configure PostgreSQL-specific features
         ConfigurePostgreSqlFeatures(modelBuilder);
 
+        // Configure entities using Fluent API extensions
+        modelBuilder.ConfigureEntities();
+
         // Configure audit fields for all entities
         ConfigureAuditFields(modelBuilder);
 
-        base.OnModelCreating(modelBuilder);
+        // Apply any additional configurations from assembly
 
+        base.OnModelCreating(modelBuilder);
     }
     /// <summary>
     /// Configure PostgreSQL-specific features and optimizations
     /// </summary>
-    private void ConfigurePostgreSqlFeatures(ModelBuilder modelBuilder)
+    private static void ConfigurePostgreSqlFeatures(ModelBuilder modelBuilder)
     {
         // Enable case-insensitive text operations using our custom function
 
@@ -71,20 +100,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         // that implement IAuditableEntity interface
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType))
-            {
-                // Configure CreatedAt to be set automatically on insert
-                modelBuilder.Entity(entityType.ClrType)
-                    .Property(nameof(IAuditableEntity.CreatedAt))
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ValueGeneratedOnAdd();
+            if (!typeof(IAuditableEntity).IsAssignableFrom(entityType.ClrType)) continue;
+            // Configure CreatedAt to be set automatically on insert
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(IAuditableEntity.CreatedAt))
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAdd();
 
-                // Configure UpdatedAt to be set automatically on update
-                modelBuilder.Entity(entityType.ClrType)
-                    .Property(nameof(IAuditableEntity.UpdatedAt))
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ValueGeneratedOnAddOrUpdate();
-            }
+            // Configure UpdatedAt to be set automatically on update
+            modelBuilder.Entity(entityType.ClrType)
+                .Property(nameof(IAuditableEntity.UpdatedAt))
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnAddOrUpdate();
         }
     }
 
@@ -133,6 +160,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     // Prevent modification of CreatedAt
                     entry.Property(nameof(IAuditableEntity.CreatedAt)).IsModified = false;
                     break;
+                case EntityState.Detached:
+                case EntityState.Unchanged:
+                case EntityState.Deleted:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

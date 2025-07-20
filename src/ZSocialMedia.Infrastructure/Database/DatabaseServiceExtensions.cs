@@ -56,7 +56,7 @@ public static class DatabaseServiceExtensions
             MaxPoolSize = dbOptions.ConnectionPool.MaxPoolSize,
             ConnectionIdleLifetime = dbOptions.ConnectionPool.ConnectionIdleLifetime,
             Timeout = dbOptions.ConnectionPool.ConnectionTimeout,
-            Multiplexing = true,
+            // Multiplexing = true,
             TcpKeepAlive = true,
             TcpKeepAliveTime = 600,
             TcpKeepAliveInterval = 30,

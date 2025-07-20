@@ -16,8 +16,8 @@ public class PostLike : EntityBase<Guid>
     public LikeSource Source { get; set; } = LikeSource.Timeline;
 
     // Navigation
-    public virtual Post Post { get; set; } = null!;
-    public virtual User User { get; set; } = null!;
+    public Post Post { get; set; } = null!;
+    public User User { get; set; } = null!;
 
     // Index: (PostId, UserId) unique, (UserId, LikedAt), (PostId, LikedAt)
 }

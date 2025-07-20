@@ -1,56 +1,59 @@
 ﻿namespace ZSocialMedia.Shared;
 
 [Serializable]
-public abstract class ValueObject
+public abstract class ValueObject : IEquatable<ValueObject>
 {
-    protected static bool EqualOperator(ValueObject left, ValueObject right)
+    protected static bool EqualOperator(ValueObject? left, ValueObject? right)
     {
-        if (left is null ^ right is null)
-        {
-            return false;
-        }
-        return right != null && (left is null || left.Equals(right));
+        if (ReferenceEquals(left, right)) return true;
+        if (left is null || right is null) return false;
+        return left.Equals(right);
     }
 
-    protected static bool NotEqualOperator(ValueObject left, ValueObject right)
+    protected static bool NotEqualOperator(ValueObject? left, ValueObject? right)
     {
-        return !(EqualOperator(left, right));
+        return !EqualOperator(left, right);
     }
 
-    protected abstract IEnumerable<object> GetEqualityComponents();
+    protected abstract IEnumerable<object?> GetEqualityComponents();
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || obj.GetType() != GetType())
-        {
-            return false;
-        }
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj == null || obj.GetType() != GetType()) return false;
 
-        var other = (ValueObject)obj;
+        return Equals((ValueObject)obj);
+    }
+
+    public bool Equals(ValueObject? other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (other == null) return false;
 
         return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
     }
 
     public override int GetHashCode()
     {
-        return GetEqualityComponents()
-             .Select(x => x != null ? x.GetHashCode() : 0)
-            .Aggregate(0, (x, y) => x ^ y);
+        var components = GetEqualityComponents();
+
+        return components
+            .Select(x => x?.GetHashCode() ?? 0)
+            .Aggregate(17, (hash, next) => hash * 31 + next);
     }
 
-    public ValueObject? GetCopy()
-    {
-        return MemberwiseClone() as ValueObject;
-    }
-    
     public static bool operator ==(ValueObject? left, ValueObject? right)
     {
-        return left != null && right != null && EqualOperator(left, right);
+        return EqualOperator(left, right);
     }
-    
+
     public static bool operator !=(ValueObject? left, ValueObject? right)
     {
-        if (left is null && right is null) return false;
-        return NotEqualOperator(left!, right!);
+        return NotEqualOperator(left, right);
+    }
+
+    public virtual ValueObject GetCopy()
+    {
+        return (ValueObject)MemberwiseClone();
     }
 }
