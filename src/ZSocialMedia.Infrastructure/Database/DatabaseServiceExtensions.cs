@@ -29,7 +29,7 @@ public static class DatabaseServiceExtensions
                     errorCodesToAdd: null);
 
                 npgsqlOptions.CommandTimeout(30);
-            });
+            }).UseSnakeCaseNamingConvention();
 
             if (environment.IsDevelopment())
             {

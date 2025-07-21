@@ -19,7 +19,7 @@ public class Comment : EntityAggregateBase<Guid>, IAuditableEntity, ISoftDelete
     public ContentFormat Format { get; set; } = ContentFormat.PlainText;
 
     // Thread info
-    public int Depth { get; set; } = 0; // Nesting level
+    public int Depth { get; set; } // Nesting level
     public string? ThreadPath { get; set; } // For efficient queries
 
     // Metrics
@@ -29,7 +29,7 @@ public class Comment : EntityAggregateBase<Guid>, IAuditableEntity, ISoftDelete
     // Status
     public bool IsEdited { get; set; }
     public DateTime? EditedAt { get; set; }
-    public bool IsPinned { get; set; } // Pinned by post author
+    public bool IsPinned { get; set; } // Pinned by post-author
     public bool IsHighlighted { get; set; } // Highlighted by author
 
     // Moderation
