@@ -70,6 +70,8 @@ public class User : EntityAggregateBase<Guid>, IAuditableEntity, ISoftDelete
         SuspendedAt = null;
         SuspensionReason = null;
         IsActive = true;
+        // Raise domain event
+        RegisterDomainEvent(new UserActivatedEvent(Id));
     }
 
     public void VerifyEmail()

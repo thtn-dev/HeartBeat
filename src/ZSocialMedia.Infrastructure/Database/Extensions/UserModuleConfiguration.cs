@@ -193,7 +193,11 @@ public static class UserModuleConfiguration
     {
         modelBuilder.Entity<UserFollower>(entity =>
         {
-            entity.ToTable("user_followers", "user");
+            entity.ToTable("user_followers", "user", t =>
+            {
+                // Check constraint to prevent self-following
+                t.HasCheckConstraint("ck_user_followers_no_self_follow", "\"follower_id\" != \"following_id\"");
+            });
             
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
@@ -211,9 +215,6 @@ public static class UserModuleConfiguration
 
             entity.ConfigureAuditFields();
 
-            // Check constraint to prevent self-following
-            entity.HasCheckConstraint("ck_user_followers_no_self_follow", 
-                "\"follower_id\" != \"following_id\"");
         });
     }
 
@@ -221,8 +222,11 @@ public static class UserModuleConfiguration
     {
         modelBuilder.Entity<UserBlock>(entity =>
         {
-            entity.ToTable("user_blocks", "user");
-            
+            entity.ToTable("user_blocks", "user", t =>
+            {
+                t.HasCheckConstraint("ck_user_blocks_no_self_block", "\"blocker_id\" != \"blocked_id\"");
+            });
+
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
@@ -246,9 +250,16 @@ public static class UserModuleConfiguration
 
             entity.ConfigureAuditFields();
 
-            // Check constraint to prevent self-blocking
-            entity.HasCheckConstraint("ck_user_blocks_no_self_block", 
-                "\"blocker_id\" != \"blocked_id\"");
+            // Relationships
+            entity.HasOne(x => x.Blocker)
+                .WithMany()
+                .HasForeignKey(x => x.BlockerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Blocked)
+                .WithMany()
+                .HasForeignKey(x => x.BlockedId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 
